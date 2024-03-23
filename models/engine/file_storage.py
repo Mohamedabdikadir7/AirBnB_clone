@@ -32,18 +32,32 @@ class FileStorage:
             json.dump(serialized_objects, f)
 
     def reload(self):
-        """ retrieves data again """
-
+        """
+        Deserializes the JSON file to objects
+        If the file doesn’t exist, no exception should be raised.
+        """
         try:
-            with open(self.__file_path, "r") as f:
-                serialized_objects = json.load(f)
-                for key, value in serialized_objects.items():
-                    class_name, obj_id = key.split('.')
-                    module = __import__(
-                            'models.' + class_name, 
-                            fromlist=[class_name]
-                            )
-                    cls = getattr(module, class_name)
-                    self.__objects[key] = cls(**value)
+            # let us open the json file.
+            file = FileStorage.filepath
+            with open(file, encoding='utf-8') as f:
+                dict1 = json.load(f)
+
+            # now lets focus on the values of this dictionary only;
+            # these values are dictionaries of instance attributes.
+
+            for value in dict1.values():
+                # extract classname to recreate our object with new method.
+
+                name = value["class"]
+
+                # we cannot create objects using the class name as a string
+                # We need to convert it to an object using eval
+                name = eval(name)
+
+                # delete the class key because our objects dont have it
+
+                del value["_class"]
+                # recreate our objects using new
+                self.new(name(**value))
         except FileNotFoundError:
             pass
