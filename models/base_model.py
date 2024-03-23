@@ -1,5 +1,6 @@
 from uuid import uuid4
 from datetime import datetime
+from models import storage
 
 
 class BaseModel:
@@ -22,10 +23,12 @@ class BaseModel:
             self.id = str(uuid4())  # Assign a unique UUID as a string
             self.created_at = datetime.now()  # Assign current datetime
             self.updated_at = datetime.now()  # Assign current datetime
+            storage.new(self)
 
     def save(self):
         """Update updated_at with the current datetime."""
         self.updated_at = datetime.now()
+        storage.save()
 
     def to_dict(self):
         """Return a dictionary containing all instance attributes."""
