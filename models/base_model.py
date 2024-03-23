@@ -1,19 +1,31 @@
-#!/usr/bin/python3
 from uuid import uuid4
 from datetime import datetime
+
 
 class BaseModel:
     """Represents the BaseModel of the HBnB project."""
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         """Initialize a new BaseModel."""
-        self.id = str(uuid4())  # Assign a unique UUID as a string
-        self.created_at = datetime.now()  # Assign current datetime
-        self.updated_at = datetime.now()  # Assign current datetime
+        if kwargs:
+            # If kwargs is not empty, initialize attributes from dictionary
+            for key, value in kwargs.items():
+                if key == 'created_at' or key == 'updated_at':
+                    # Convert strings to datetime objects
+                    setattr(self, key, datetime.strptime
+                            (value, '%Y-%m-%dT%H:%M:%S.%f'))
+                elif key != '__class__':
+                    # Ignore __class__ key
+                    setattr(self, key, value)
+        else:
+            # If kwargs is empty, create new instance
+            self.id = str(uuid4())  # Assign a unique UUID as a string
+            self.created_at = datetime.now()  # Assign current datetime
+            self.updated_at = datetime.now()  # Assign current datetime
 
     def save(self):
         """Update updated_at with the current datetime."""
-        self.updated_at = datetime.now()  # Update updated_at with current datetime
+        self.updated_at = datetime.now()
 
     def to_dict(self):
         """Return a dictionary containing all instance attributes."""
@@ -32,4 +44,3 @@ class BaseModel:
             self.id,  # Unique ID
             self.__dict__  # Dictionary representation of instance attributes
         )
-
