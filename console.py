@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+""" a file implementing the console """
 import cmd
 
 
@@ -17,12 +18,8 @@ class HBNBCommand(cmd.Cmd):
 
     def do_EOF(self, arg):
         """Exit the program on EOF"""
-        print("")  # Print a newline for better formatting
+        print()  # Print a newline for better formatting
         return True
-
-    def emptyline(self):
-        """Do nothing on an empty line"""
-        pass
 
 
 if __name__ == '__main__':
