@@ -4,6 +4,8 @@ file_storage.py module
 """
 
 import json
+import os
+from models.base_model import BaseModel
 
 
 class FileStorage:
@@ -25,25 +27,26 @@ class FileStorage:
 
     def save(self):
         """ saves the data """
+        all_objs = self.__objects
         serialized_objects = {}
-        for key, value in self.__objects.items():
-            serialized_objects[key] = value.to_dict()
-        with open(self.__file_path, "w") as f:
+        for obj_key, obj_value in all_objs.items():
+            key = "{}.{}".format(obj_value.__class__.__name__, obj_value.id)
+            serialized_objects[key] = obj_value.to_dict()
+
+        with open(self.__file_path, "w", encoding="utf-8") as f:
             json.dump(serialized_objects, f)
 
-    def reload(self):
-    """ retrieves data again """
 
-    try:
-        with open(self.__file_path, "r") as f:
-            serialized_objects = json.load(f)
-            for key, value in serialized_objects.items():
-                class_name, obj_id = key.split('.')
-                module = __import__(
-                        'models.' + class_name, 
-                        fromlist=[class_name]
-                        )
-                cls = getattr(module, class_name)
-                self.__objects[key] = cls(**value)
-    except FileNotFoundError:
-        pass
+    def reload(self):
+        """ retrieves data again """
+        if os.path.isfile(self.__file_path):
+            with open(self.__file_path, "r", encoding="utf-8") as f:
+                try:
+                    serialized_objects = json.load(f)
+                    for key, value in serialized_objects.items():
+                        class_name, obj_id = key.split('.')
+                        cls = eval(class_name)
+                        instance = cls(**values)
+                        self.__objects[key] = instance
+                except Exception:
+                    pass
