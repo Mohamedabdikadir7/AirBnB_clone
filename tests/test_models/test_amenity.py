@@ -31,8 +31,11 @@ class TestAmenity(unittest.TestCase):
         """Test that tests/test_models/test_state.py conforms to PEP8."""
         pep8style = pep8.StyleGuide(quiet=True)
         res = pep8style.check_files(['tests/test_models/test_amenity.py'])
-        self.assertEqual(res.total_errors, 0,
-                         "Found code style errors (and warnings).")
+        self.assertEqual(
+                res.total_errors, 
+                0,
+                "Found code style errors (and warnings)."
+                )
 
     def test_doc_constructor(self):
         """Constructor documentation"""
